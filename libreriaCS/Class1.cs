@@ -168,5 +168,18 @@ namespace libreriaCS
             file.Close();
             return max;
         }
+
+        public void AggRec(string[] div)
+        {
+            Random rn = new Random();
+            LibreriaCS l = new LibreriaCS();
+            var file = new FileStream("belotti.csv", FileMode.Append, FileAccess.Write, FileShare.Read);
+            BinaryWriter wr = new BinaryWriter(file);
+            string linea = Record(div, ";", 300, rn.Next(10, 21).ToString());
+            char[] array = linea.ToCharArray();
+            wr.Write(array);
+            wr.Close();
+            file.Close();
+        }
     }
 }
