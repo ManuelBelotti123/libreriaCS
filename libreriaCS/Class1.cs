@@ -7,6 +7,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Schema;
 
 namespace libreriaCS
 {
@@ -71,12 +72,13 @@ namespace libreriaCS
             Random rn = new Random();
             int a = 0, cont = 0;
             var file = new FileStream("belotti.csv", FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
-            var app = new FileStream("app.csv", FileMode.Append, FileAccess.Write, FileShare.Read);
+            var app = new FileStream("app.csv", FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read);
             BinaryReader rd = new BinaryReader(file);
             BinaryWriter wr = new BinaryWriter(app);
             file.Seek(0, SeekOrigin.Begin);
             while (file.Position < file.Length)
             {
+                Console.WriteLine("o");
                 string random = rn.Next(0, 21).ToString();
                 a = 0; cont = 0;
                 while (true)
@@ -101,27 +103,10 @@ namespace libreriaCS
                 wr.Write(array);
                 file.Seek(2, SeekOrigin.Current);
             }
-        }
-
-        public void campi_prova(string nomefile)
-        {
-            string line = ";miovalore;cancellato\r\n";
-            char[] linea = line.ToCharArray();
-            //apertura del file e dello strumento di scrittura
-            var file = new FileStream("belotti.csv", FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
-            BinaryWriter writer = new BinaryWriter(file);
-            BinaryReader reader = new BinaryReader(file);
-            int a = 0;
-            while (a == 10)
-            {
-                a = file.ReadByte();
-            }
-            Console.WriteLine(a);
-            //scrive sul file
-            file.Seek(-2, SeekOrigin.Current);
-            writer.Write(linea);
-            writer.Close();
+            rd.Close();
+            wr.Close();
             file.Close();
+            app.Close();
         }
     }
 }
