@@ -63,7 +63,7 @@ namespace libreriaCS
             r.pla = div[17];
             r.c = "1";
             //stabiliamo una lunghezza fissa per ogni record
-            return (r.comune + sp + r.prov + sp + r.reg + sp + r.tip + sp + r.stelle + sp + r.den + sp + r.ind + sp + r.cap + sp + r.local + sp + r.fraz + sp + r.tel + sp + r.fax + sp + r.posel + sp + r.web + sp + r.ces + sp + r.cam + sp + r.pls + sp + r.pla + sp + random + sp + r.c).PadRight(l) + "##\r\n";
+            return (r.comune + sp + r.prov + sp + r.reg + sp + r.tip + sp + r.stelle + sp + r.den + sp + r.ind + sp + r.cap + sp + r.local + sp + r.fraz + sp + r.tel + sp + r.fax + sp + r.posel + sp + r.web + sp + r.ces + sp + r.cam + sp + r.pls + sp + r.pla + sp + random + sp + r.c + ']').PadRight(l) + "##\r\n";
 
         }
 
@@ -125,6 +125,7 @@ namespace libreriaCS
             app.Close();
             File.Replace("app.csv", "belotti.csv", "backup.csv");
         }
+
         public int ContaCampi()
         {
             var file = new FileStream("belotti.csv", FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
@@ -134,6 +135,38 @@ namespace libreriaCS
             //divisione dei vari campi della stringa
             string[] div = line.Split(';');
             return div.Length;
+        }
+
+        public int LungMaxRec()
+        {
+            int a = 0, cont = 0, max = 0;
+            var file = new FileStream("belotti.csv", FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
+            BinaryReader rd = new BinaryReader(file);
+            file.Seek(0, SeekOrigin.Begin);
+            while (file.Position < file.Length)
+            {
+                a = 0; cont = 0;
+                while (true)
+                {
+                    if (a != 93)
+                    {
+                        a = file.ReadByte();
+                        cont++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                if (cont > max)
+                {
+                    max = cont;
+                }
+                file.Seek(304 - cont, SeekOrigin.Current);
+            }
+            rd.Close();
+            file.Close();
+            return max;
         }
     }
 }
