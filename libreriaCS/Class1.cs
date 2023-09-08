@@ -67,6 +67,23 @@ namespace libreriaCS
 
         }
 
+        public bool ContrAgg()
+        {
+            int a;
+            bool b = false;
+            var file = new FileStream("belotti.csv", FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
+            BinaryReader rd = new BinaryReader(file);
+            file.Seek(301, SeekOrigin.Begin);
+            a = rd.Read();
+            if (a == 35)
+            {
+                b = true;
+            }
+            rd.Close();
+            file.Close();
+            return b;
+        }
+
         public void aggiusta()
         {
             Random rn = new Random();
@@ -78,8 +95,7 @@ namespace libreriaCS
             file.Seek(0, SeekOrigin.Begin);
             while (file.Position < file.Length)
             {
-                Console.WriteLine("o");
-                string random = rn.Next(0, 21).ToString();
+                string random = rn.Next(10, 21).ToString();
                 a = 0; cont = 0;
                 while (true)
                 {
@@ -107,6 +123,17 @@ namespace libreriaCS
             wr.Close();
             file.Close();
             app.Close();
+            File.Replace("app.csv", "belotti.csv", "backup.csv");
+        }
+        public int ContaCampi()
+        {
+            var file = new FileStream("belotti.csv", FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
+            BinaryReader rd = new BinaryReader(file);
+            byte[] br = rd.ReadBytes(302);
+            string line = Encoding.ASCII.GetString(br, 0, br.Length);
+            //divisione dei vari campi della stringa
+            string[] div = line.Split(';');
+            return div.Length;
         }
     }
 }
