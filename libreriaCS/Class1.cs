@@ -181,5 +181,42 @@ namespace libreriaCS
             wr.Close();
             file.Close();
         }
+
+        public string[] EstrapolaCampi(int f, int b, int c)
+        {
+            string[] arr = new string[100000000];
+            string[] div;
+            int a = 0, cont = 0, i = 0;
+            var file = new FileStream("belotti.csv", FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
+            BinaryReader rd = new BinaryReader(file);
+            file.Seek(0, SeekOrigin.Begin);
+            while (file.Position < file.Length)
+            {
+                a = 0; cont = 0;
+                while (true)
+                {
+                    if (a != 93)
+                    {
+                        a = file.ReadByte();
+                        cont++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                file.Seek(-cont, SeekOrigin.Current);
+                byte[] br = rd.ReadBytes(cont);
+                string line = Encoding.ASCII.GetString(br, 0, br.Length);
+                //divisione dei vari campi della stringa
+                div = line.Split(';');
+                arr[i] = div[f] + ';' + div[b] + ';' + div[c];
+                i++;
+                file.Seek(304 - cont, SeekOrigin.Current);
+            }
+            rd.Close();
+            file.Close();
+            return arr;
+        }
     }
 }
