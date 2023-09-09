@@ -182,7 +182,7 @@ namespace libreriaCS
             file.Close();
         }
 
-        public string[] EstrapolaCampi(int f, int b, int c)
+        public string[] EstrapolaCampi(int f, int b, int c, bool val)
         {
             string[] arr = new string[100000000];
             string[] div;
@@ -210,7 +210,14 @@ namespace libreriaCS
                 string line = Encoding.ASCII.GetString(br, 0, br.Length);
                 //divisione dei vari campi della stringa
                 div = line.Split(';');
-                arr[i] = div[f] + ';' + div[b] + ';' + div[c];
+                if (val)
+                {
+                    arr[i] = div[f] + ';' + div[b] + ';' + div[c];
+                }
+                else
+                {
+                    arr[i] = line;
+                }
                 i++;
                 file.Seek(304 - cont, SeekOrigin.Current);
             }
