@@ -258,5 +258,77 @@ namespace libreriaCS
             file.Close();
             return arr;
         }
+
+        public void ModificaCampo(int campo, string ricerca, string modifica)
+        {
+            Random rn = new Random();
+            int a = 0, cont = 0;
+            var file = new FileStream("belotti.csv", FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
+            var app = new FileStream("app.csv", FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read);
+            BinaryReader rd = new BinaryReader(file);
+            BinaryWriter wr = new BinaryWriter(app);
+            file.Seek(0, SeekOrigin.Begin);
+            while (file.Position < file.Length)
+            {
+                string random = rn.Next(10, 21).ToString();
+                a = 0; cont = 0;
+                while (true)
+                {
+                    if (a != 93)
+                    {
+                        a = file.ReadByte();
+                        cont++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                file.Seek(-cont, SeekOrigin.Current);
+                byte[] br = rd.ReadBytes(cont);
+                string line = Encoding.ASCII.GetString(br, 0, br.Length);
+                //divisione dei vari campi della stringa
+                string[] div = line.Split(';');
+                if (div[campo] == ricerca)
+                {
+                    div[campo] = modifica;
+                }
+                string linea = RecordMod(div, ";", 300);
+                char[] array = linea.ToCharArray();
+                wr.Write(array);
+                file.Seek(304 - cont, SeekOrigin.Current);
+            }
+            rd.Close();
+            wr.Close();
+            file.Close();
+            app.Close();
+            File.Replace("app.csv", "belotti.csv", "backup.csv");
+        }
+
+        public string RecordMod(string[] div, string sp, int l)
+        {
+            str r;
+            r.comune = div[0];
+            r.prov = div[1];
+            r.reg = div[2];
+            r.tip = div[3];
+            r.stelle = div[4];
+            r.den = div[5];
+            r.ind = div[6];
+            r.cap = div[7];
+            r.local = div[8];
+            r.fraz = div[9];
+            r.tel = div[10];
+            r.fax = div[11];
+            r.posel = div[12];
+            r.web = div[13];
+            r.ces = div[14];
+            r.cam = div[15];
+            r.pls = div[16];
+            r.pla = div[17];
+            r.mval = div[18];
+            r.c = "1";
+            return (r.comune + sp + r.prov + sp + r.reg + sp + r.tip + sp + r.stelle + sp + r.den + sp + r.ind + sp + r.cap + sp + r.local + sp + r.fraz + sp + r.tel + sp + r.fax + sp + r.posel + sp + r.web + sp + r.ces + sp + r.cam + sp + r.pls + sp + r.pla + sp + r.mval + sp + r.c + ']').PadRight(l) + "##\r\n";
+        }
     }
 }
