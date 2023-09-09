@@ -459,8 +459,12 @@ namespace libreriaCS
                 byte[] br = rd.ReadBytes(cont - 1);
                 string line = Encoding.ASCII.GetString(br, 0, br.Length);
                 //divisione dei vari campi della stringa
-                arr[i] = line;
-                i++;
+                string[] div = line.Split(';');
+                if (div[div.Length - 1] == "1")
+                {
+                    arr[i] = line;
+                    i++;
+                }
                 file.Seek(1, SeekOrigin.Current);
                 file.Seek(304 - cont, SeekOrigin.Current);
             }
