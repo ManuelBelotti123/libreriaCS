@@ -330,5 +330,64 @@ namespace libreriaCS
             r.c = "1";
             return (r.comune + sp + r.prov + sp + r.reg + sp + r.tip + sp + r.stelle + sp + r.den + sp + r.ind + sp + r.cap + sp + r.local + sp + r.fraz + sp + r.tel + sp + r.fax + sp + r.posel + sp + r.web + sp + r.ces + sp + r.cam + sp + r.pls + sp + r.pla + sp + r.mval + sp + r.c + ']').PadRight(l) + "##\r\n";
         }
+
+        public void CancRecLogica(int campo, string ricerca, bool cor)
+        {
+            string[] div;
+            int a = 0, cont = 0;
+            var file = new FileStream("belotti.csv", FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
+            BinaryReader rd = new BinaryReader(file);
+            BinaryWriter wr = new BinaryWriter(file);
+            file.Seek(0, SeekOrigin.Begin);
+            while (file.Position < file.Length)
+            {
+                a = 0; cont = 0;
+                while (true)
+                {
+                    if (a != 93)
+                    {
+                        a = file.ReadByte();
+                        cont++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                file.Seek(-cont, SeekOrigin.Current);
+                byte[] br = rd.ReadBytes(cont);
+                long pos = file.Position;
+                string line = Encoding.ASCII.GetString(br, 0, br.Length);
+                //divisione dei vari campi della stringa
+                div = line.Split(';');
+                //file.Position = pos;
+                if (div[campo] == ricerca)
+                {
+                    if (cor)
+                    {
+                        file.Seek(-2, SeekOrigin.Current);
+                        char[] zero = { '1' };
+                        wr.Write(zero[0]);
+                        file.Seek(1, SeekOrigin.Current);
+                        file.Seek(304 - cont, SeekOrigin.Current);
+                    }
+                    else
+                    {
+                        file.Seek(-2, SeekOrigin.Current);
+                        char[] zero = { '0' };
+                        wr.Write(zero[0]);
+                        file.Seek(1, SeekOrigin.Current);
+                        file.Seek(304 - cont, SeekOrigin.Current);
+                    }
+                }
+                else
+                {
+                    file.Seek(304 - cont, SeekOrigin.Current);
+                }
+            }
+            rd.Close();
+            wr.Close();
+            file.Close();
+        }
     }
 }
