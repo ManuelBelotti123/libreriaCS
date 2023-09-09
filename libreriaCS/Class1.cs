@@ -356,11 +356,9 @@ namespace libreriaCS
                 }
                 file.Seek(-cont, SeekOrigin.Current);
                 byte[] br = rd.ReadBytes(cont);
-                long pos = file.Position;
                 string line = Encoding.ASCII.GetString(br, 0, br.Length);
                 //divisione dei vari campi della stringa
                 div = line.Split(';');
-                //file.Position = pos;
                 if (div[campo] == ricerca)
                 {
                     if (cor)
@@ -388,6 +386,51 @@ namespace libreriaCS
             rd.Close();
             wr.Close();
             file.Close();
+        }
+
+        public void Ricompatta()
+        {
+            LibreriaCS l = new LibreriaCS();
+            int a = 0, cont = 0;
+            var file = new FileStream("belotti.csv", FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
+            var app = new FileStream("app.csv", FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read);
+            BinaryReader rd = new BinaryReader(file);
+            BinaryWriter wr = new BinaryWriter(app);
+            file.Seek(0, SeekOrigin.Begin);
+            while (file.Position < file.Length)
+            {
+                a = 0; cont = 0;
+                while (true)
+                {
+                    if (a != 93)
+                    {
+                        a = file.ReadByte();
+                        cont++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                file.Seek(-cont, SeekOrigin.Current);
+                byte[] br = rd.ReadBytes(cont);
+                string line = Encoding.ASCII.GetString(br, 0, br.Length);
+                //divisione dei vari campi della stringa
+                string[] div = line.Split(';');
+                if (div[div.Length - 1] == "1]")
+                {
+
+                    string linea = l.RecordMod(div, ";", 300);
+                    char[] array = linea.ToCharArray();
+                    wr.Write(array);
+                }
+                file.Seek(304 - cont, SeekOrigin.Current);
+            }
+            rd.Close();
+            wr.Close();
+            file.Close();
+            app.Close();
+            File.Replace("app.csv", "belotti.csv", "backup.csv");
         }
     }
 }
