@@ -432,5 +432,41 @@ namespace libreriaCS
             app.Close();
             File.Replace("app.csv", "belotti.csv", "backup.csv");
         }
+
+        public string[] Visualizza()
+        {
+            string[] arr = new string[1000000];
+            int a = 0, cont = 0, i = 0;
+            var file = new FileStream("belotti.csv", FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
+            BinaryReader rd = new BinaryReader(file);
+            file.Seek(0, SeekOrigin.Begin);
+            while (file.Position < file.Length)
+            {
+                a = 0; cont = 0;
+                while (true)
+                {
+                    if (a != 93)
+                    {
+                        a = file.ReadByte();
+                        cont++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                file.Seek(-cont, SeekOrigin.Current);
+                byte[] br = rd.ReadBytes(cont - 1);
+                string line = Encoding.ASCII.GetString(br, 0, br.Length);
+                //divisione dei vari campi della stringa
+                arr[i] = line;
+                i++;
+                file.Seek(1, SeekOrigin.Current);
+                file.Seek(304 - cont, SeekOrigin.Current);
+            }
+            rd.Close();
+            file.Close();
+            return arr;
+        }
     }
 }
